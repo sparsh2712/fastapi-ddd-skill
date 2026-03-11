@@ -1,21 +1,21 @@
 {
-  "name": "fastapi-ddd",
+  "name": "skills",
   "owner": {
     "name": "Sparsh",
     "email": "sparshbadjate27@gmail.com"
   },
   "metadata": {
-    "description": "Domain-Driven Design implementation guidelines for async Python backends",
+    "description": "A collection of Claude skills",
     "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "fastapi-ddd",
       "description": "Domain-Driven Design implementation guidelines for async Python backends",
-      "source": "./",
+      "source": "./skills/fastapi-backend-ddd",
       "strict": false,
       "skills": [
-        "./"
+        "./skills/fastapi-backend-ddd"
       ]
     }
   ]
