@@ -1,0 +1,12 @@
+# Installed skills (managed by skills-lock.json, not source code)
+.claude/skills/
+.agents/skills/
+skills-lock.json
+
+# Claude Code local config
+.claude/hooks/
+.claude/settings.json
+.claude/projects/
+
+# OS files
+.DS_Store

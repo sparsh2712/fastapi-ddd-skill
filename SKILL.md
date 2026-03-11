@@ -98,6 +98,14 @@ config.py
 
 ## Quick Start Checklists
 
+### Strategic Planning Phase (before code)
+- [ ] Interview the user to identify business capabilities — use the domain discovery protocol (resources/domain-discovery.md)
+- [ ] Classify Subdomains — Core Domain (full DDD), Supporting (moderate), Generic (buy/use library)
+- [ ] Identify Bounded Contexts — where does the model diverge? Ask the user if unclear
+- [ ] Map Context Relationships — how do contexts communicate? (Partnership, Customer-Supplier, ACL, etc.)
+- [ ] Establish Ubiquitous Language — define canonical terms per context with anti-terms
+- [ ] Document Boundary Decisions — record rationale, consequences, and revisit triggers
+
 ### New Domain Feature
 - [ ] Identify Bounded Context — which module owns this?
 - [ ] Name everything using Ubiquitous Language — domain expert vocabulary only
@@ -121,6 +129,7 @@ config.py
 
 ## Topic Guides
 
+- Domain Discovery & Interview Protocol → resources/domain-discovery.md
 - Domain Model → resources/domain-model.md
 - Infrastructure Layer → resources/infrastructure.md
 - Repository Pattern → resources/repository-pattern.md
