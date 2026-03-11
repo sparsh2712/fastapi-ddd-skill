@@ -1,0 +1,7 @@
+{
+  "name": "fastapi-ddd",
+  "description": "Domain-Driven Design implementation guidelines for async Python backends",
+  "version": "1.0.0",
+  "author": "Sparsh",
+  "install": "fastapi-ddd"
+}
