@@ -21,7 +21,7 @@ When this skill is active, Claude will:
 
 **Manual**
 ```bash
-git clone https://github.com/your-username/fastapi-backend-ddd.git
+git clone git@github.com:sparsh2712/fastapi-ddd-skill.git
 cp -r fastapi-backend-ddd ~/.claude/skills/
 ```
 
@@ -39,8 +39,3 @@ resources/
   bounded-context.md     # Ubiquitous Language, Anti-Corruption Layer
   complete-example.md    # Full end-to-end implementation (Batch/OrderLine)
 ```
-
-## References
-
-- *Domain-Driven Design: Tackling Complexity in the Heart of Software* — Eric Evans
-- *Architecture Patterns with Python* — Harry Percival & Bob Gregory
