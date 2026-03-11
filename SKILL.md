@@ -1,0 +1,143 @@
+---
+name: fastapi-backend-ddd
+description: Domain-Driven Design implementation guidelines for async Python backends. Covers the 4-layer architecture (Infrastructure → Domain → Service → Interaction), the Repository pattern, Unit of Work, Aggregates, Value Objects, Entities, Bounded Contexts, and Ubiquitous Language. Use this skill whenever the user is building or designing a backend with DDD principles — domain models, service layer, repositories, unit of work, aggregates, value objects, domain events, or bounded contexts in Python.
+---
+
+# Domain-Driven Design — Async Python Backend
+
+---
+
+## Foundational Philosophy
+
+**Domain model is the heart.** Infrastructure serves the domain — not the other way around. The domain layer has zero infrastructure imports.
+
+**Ubiquitous Language**: Class names, method names, module names, and API routes use the language of the business domain. If the domain expert says "allocate stock", the method is `allocate()` — not `process_inventory_adjustment()`.
+
+**Naming is documentation.** No docstrings. No inline comments unless a non-obvious constraint must be preserved. Names carry all semantic weight. Explicit over clever.
+
+**Flat over DRY.** Explicit, repetitive code that fits in one context window is worth more than elegant abstractions requiring ten file traversals to understand one operation.
+
+---
+
+## The Four-Layer Architecture
+
+```
+┌─────────────────────────────────────────────┐
+│  Interaction Layer                          │  HTTP routers, CLI adapters, MCP handlers
+│                                             │  Thin — translate protocol to service calls
+├─────────────────────────────────────────────┤
+│  Service Layer                              │  Use case orchestrators
+│                                             │  Primitives in, primitives out
+│                                             │  Uses domain + infrastructure (repositories)
+├─────────────────────────────────────────────┤
+│  Domain Layer                               │  Entities, Value Objects, Aggregates
+│                                             │  Domain events, exceptions, domain services
+│                                             │  Zero infrastructure imports — pure Python
+├─────────────────────────────────────────────┤
+│  Infrastructure Layer                       │  Databases, repositories, external services
+└─────────────────────────────────────────────┘
+```
+
+**Layer rules:**
+- Interaction calls Service — never Infrastructure directly
+- Service calls Domain + Infrastructure (repositories, gateways)
+- Domain calls nothing — pure Python
+- Infrastructure calls nothing above it
+
+---
+
+## Four Core Tactical DDD Patterns
+
+| Pattern | Role |
+|---|---|
+| **Domain Model** | Entities, Value Objects, Aggregates — pure Python, zero infra imports |
+| **Repository** | Hides persistence behind a collection interface. Abstract base + concrete implementation + fake for tests. |
+| **Unit of Work** | Wraps a database transaction, owns repositories, is the only thing that commits. |
+| **Service Layer** | Use case orchestrators. Accept primitives + UoW, call domain, return primitives. |
+
+---
+
+## Project Structure
+
+```
+src/
+  domain/
+    {context}/
+      model.py        # Entities, Value Objects, Aggregates — no infra imports
+      events.py       # Domain events (frozen dataclasses)
+      commands.py     # Commands (frozen dataclasses)
+      exceptions.py   # Domain exceptions
+      services.py     # Domain services (stateless pure logic)
+
+  service/
+    {context}/
+      {use_case}.py   # One file per use case group — accepts UoW, returns primitives
+
+  infrastructure/
+    repositories/
+      {context}/
+        {aggregate}_repository.py  # Abstract + concrete + fake per aggregate root
+
+  unit_of_work/
+    abstract.py       # AbstractUnitOfWork
+    concrete.py       # Concrete UoW — wraps database connection
+    fake.py           # FakeUnitOfWork — in-memory, for unit tests
+
+  entrypoints/
+    app.py            # Application setup, lifespan, middleware
+    dependencies.py   # Dependency injection factories
+    routers/
+      {context}.py    # Thin routers
+    schemas/
+      {context}.py    # Request/response schemas
+
+config.py
+```
+
+---
+
+## Quick Start Checklists
+
+### New Domain Feature
+- [ ] Identify Bounded Context — which module owns this?
+- [ ] Name everything using Ubiquitous Language — domain expert vocabulary only
+- [ ] Define Entities, Value Objects, Aggregates in `domain/{context}/model.py` — no infra imports
+- [ ] Define domain events in `domain/{context}/events.py`
+- [ ] Define domain exceptions in `domain/{context}/exceptions.py`
+- [ ] Write repository — Abstract base + concrete implementation + fake
+- [ ] Write service functions — accept UoW and primitives, return primitives
+- [ ] Write request/response schemas
+- [ ] Write thin router
+
+### New API Endpoint
+- [ ] Router validates request via schema
+- [ ] Router calls service function, passing UoW from dependency injection
+- [ ] Service uses `async with uow:` — never calls commit directly
+- [ ] Domain enforces all business rules
+- [ ] Router maps domain exceptions to HTTP errors
+- [ ] Response schema is separate from domain objects
+
+---
+
+## Topic Guides
+
+- Domain Model → resources/domain-model.md
+- Infrastructure Layer → resources/infrastructure.md
+- Repository Pattern → resources/repository-pattern.md
+- Unit of Work → resources/unit-of-work.md
+- Service Layer → resources/service-layer.md
+- Interaction Layer → resources/interaction-layer.md
+- Bounded Context & Ubiquitous Language → resources/bounded-context.md
+- Complete Example → resources/complete-example.md
+
+---
+
+## Core Principles
+
+1. Domain has no infrastructure imports — pure Python, fast unit tests
+2. Only UoW commits — repositories never call `commit()` or `rollback()`
+3. Repositories operate on Aggregate roots only — no repository for internal entities
+4. Ubiquitous Language in code — names are the documentation
+5. Flat over DRY — repetitive but readable beats abstract and compact
+6. TDD — FakeUoW + FakeRepository enable fast unit tests without a database
+7. The concrete UoW is constructed at the interaction layer boundary — service layer only ever sees the abstract interface
